@@ -4,12 +4,12 @@ const App = () => (
     <div className="container">
         <div className="wrapper">
         <div className="title">
-                React JS Simply version to starter package
+               AD Group Frontend
         </div>
-            <p> Combination all of things . Readux - thunk</p>
+            <p> IP Management System with Basic UI</p>
 
             <h1>sujanitbd@gmail.com </h1>
-            <h1>http://github.com/sujanprodhan</h1>
+            <h1><a href="https://github.com/sujanprodhan/AD_GROUP_FRONTENT" target="_blank"> GitHub URL</a></h1>
         </div>
     </div>
 );
