@@ -1,26 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import { Route, Switch } from "react-router-dom";
+import "semantic-ui-css/semantic.min.css";
+import Menu from "./components/Menu";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Login from "./components/Login";
+import Home from "./components/Home";
+import IPList from "./components/IPList";
+import AddNewIP from "./components/AddNewIP";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import "./styles.css";
+class App extends Component {
+  componentDidMount() {
+
+  }
+
+  render() {
+    return (
+      <div className="ad-group-page">
+        <Menu />
+        <Switch>
+          <Route path="/" exact component={Home} />
+          <Route path="/login" exact component={Login} />
+          <ProtectedRoute path="/add-ip" exact component={AddNewIP} />
+          <ProtectedRoute path="/ip-list" exact component={IPList} />
+        </Switch>
+      </div>
+    );
+  }
 }
 
 export default App;
