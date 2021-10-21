@@ -1,6 +1,6 @@
 import {
   LOGIN,
-  LOGOUT
+  LOGOUT,
 } from "../actions/actionTypes";
 
 const openState = {
@@ -15,6 +15,6 @@ export default (state = openState, action) => {
     case LOGOUT:
       return { ...state, loggedIn: false, user: null }
     default:
-      return openState
+      return state
   }
 }
