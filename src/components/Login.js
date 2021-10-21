@@ -6,13 +6,19 @@ import { withRouter, Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
 
 class Login extends Component {
-  state = {
-    account: {
-      email: "",
-      password: "",
-    },
-    logError: "",
-  };
+  constructor(props){
+    super(props);
+    this.state = {
+      account: {
+        email: "",
+        password: "",
+      },
+      logError: "",
+    };
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  }
+
 
   handleSubmit = () => {
     const { email, password } = this.state.account;
@@ -24,7 +30,7 @@ class Login extends Component {
     };
     this.props.attempLogin(loginData, redirectUrl).then((data) => {
       if (data && data.token) {
-        this.setState({ logError: "" });
+        //this.setState({ logError: "" });       
       } else {
         console.log("data === ", data);
         this.setState({ logError: data.error });
@@ -39,6 +45,9 @@ class Login extends Component {
       account,
     });
   };
+  componentWillUnmount(){
+    console.log("called here")
+  }
 
   render() {
     const { logError } = this.state;

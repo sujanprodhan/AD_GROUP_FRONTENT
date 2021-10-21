@@ -2,12 +2,14 @@ import { createStore, compose, applyMiddleware, combineReducers } from "redux";
 import thunk from 'redux-thunk';
  import logger from 'redux-logger';
 import authReducer from "./reducers/authReducer";
+import ipListReducer from "./reducers/ipListReducer";
 import { AUTH_LOGOUT } from "./actions/actionTypes";
 
 const composeEnhancers =  compose;
 
 const appReducer = combineReducers({
   auth: authReducer,
+  list:ipListReducer
   //other reducers
 });
 
