@@ -1,6 +1,7 @@
 import { createStore, compose, applyMiddleware, combineReducers } from "redux";
+import thunk from 'redux-thunk';
+ import logger from 'redux-logger';
 import authReducer from "./reducers/authReducer";
-import reduxThunk from "redux-thunk";
 import { AUTH_LOGOUT } from "./actions/actionTypes";
 
 const composeEnhancers =  compose;
@@ -18,9 +19,26 @@ const rootReducer = (state, action) => {
   return appReducer(state, action);
 };
 
+// const store = createStore(
+//   rootReducer,
+//   composeEnhancers(applyMiddleware(reduxThunk))
+// );
+
+// export default store;
+
+
+
+
+const middleware = applyMiddleware(thunk, logger);
+
+const reduxDevTools = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
 const store = createStore(
-  rootReducer,
-  composeEnhancers(applyMiddleware(reduxThunk))
+    rootReducer,
+    reduxDevTools(
+        middleware
+    )
 );
 
 export default store;
+

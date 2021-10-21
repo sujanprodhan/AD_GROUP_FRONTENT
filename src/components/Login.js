@@ -1,33 +1,51 @@
 import React, { Component } from "react";
-import { Grid, Button, Form } from "semantic-ui-react";
+import { Grid, Button, Form, Message } from "semantic-ui-react";
 import { connect } from "react-redux";
-import { authenticate } from "../store/actions/authActions";
-import { withRouter } from "react-router-dom";
+import { authenticate, attempLogin } from "../store/actions/authActions";
+import { withRouter, Redirect } from "react-router-dom";
+import PropTypes from "prop-types";
 
 class Login extends Component {
   state = {
     account: {
-      email: "test@test.mail",
-      password: "test"
-    }
+      email: "",
+      password: "",
+    },
+    logError: "",
   };
 
   handleSubmit = () => {
     const { email, password } = this.state.account;
     const { state } = this.props.location;
     const redirectUrl = state ? state.from.pathname : "/";
-    this.props.authenticate(email, password, redirectUrl);
+    const loginData = {
+      email: email,
+      password: password,
+    };
+    this.props.attempLogin(loginData, redirectUrl).then((data) => {
+      if (data && data.token) {
+        this.setState({ logError: "" });
+      } else {
+        console.log("data === ", data);
+        this.setState({ logError: data.error });
+      }
+    });
   };
 
   handleChange = ({ currentTarget: input }) => {
     const account = { ...this.state.account };
     account[input.name] = input.value;
     this.setState({
-      account
+      account,
     });
   };
 
   render() {
+    const { logError } = this.state;
+    const { loggedIn } = this.props;
+    if (loggedIn) {
+      //  {loggedIn ? <Redirect to="/ip-list" /> : ""} // redirect to other page
+    }
     return (
       <div className="wrapper">
         <h1>Login</h1>
@@ -38,6 +56,7 @@ class Login extends Component {
                 <Form.Input
                   label="Email"
                   name="email"
+                  type="email"
                   value={this.state.account.email}
                   onChange={this.handleChange}
                 />
@@ -54,6 +73,12 @@ class Login extends Component {
                   Login
                 </Button>
               </Form>
+
+              {logError && (
+                <Message warning>
+                  <Message.Header>{logError}</Message.Header>
+                </Message>
+              )}
             </Grid.Column>
             <Grid.Column />
           </Grid.Row>
@@ -63,4 +88,18 @@ class Login extends Component {
   }
 }
 
-export default withRouter(connect(null, { authenticate })(Login));
+Login.propTypes = {
+  attempLogin: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  loggedIn: state.auth.loggedIn,
+});
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    attempLogin: (data, redirectUrl) =>
+      dispatch(attempLogin(data, redirectUrl)),
+  };
+};
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Login));
