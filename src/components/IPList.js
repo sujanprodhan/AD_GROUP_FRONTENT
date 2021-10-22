@@ -12,6 +12,7 @@ import {
   Divider,
   Input,
   TextArea,
+  Icon
 } from "semantic-ui-react";
 import { connect } from "react-redux";
 import { withRouter, Redirect } from "react-router-dom";
@@ -33,6 +34,7 @@ class IPList extends Component {
       inputDescription: "",
       updataErrorMessage: "",
       updateStatus: true,
+      isProcessingData: true,
     };
     this.setOpenModal = this.setOpenModal.bind(this);
     this.openDataWithModal = this.openDataWithModal.bind(this);
@@ -87,7 +89,7 @@ class IPList extends Component {
   }
   componentDidMount() {
     this.props.fetchIpList().then((data) => {
-      this.setState({ ipList: data.data || [] });
+      this.setState({ ipList: data.data || [], isProcessingData: false });
     });
   }
 
@@ -100,49 +102,59 @@ class IPList extends Component {
       inputDescription,
       updateStatus,
       updataErrorMessage,
+      isProcessingData,
     } = this.state;
     return (
       <div className="wrapper">
-        <h1>IP Address List</h1>
+        <h3>IP Address List</h3>
 
-        <Table celled>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell>SL No.</Table.HeaderCell>
-              <Table.HeaderCell>Label</Table.HeaderCell>
-              <Table.HeaderCell>IP Address</Table.HeaderCell>
-              <Table.HeaderCell>Description</Table.HeaderCell>
-              <Table.HeaderCell>Action</Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
+        {isProcessingData ? (
+          <Message icon>
+            <Icon name="circle notched" loading />
+            <Message.Content>
+              <Message.Header>Just one second</Message.Header>
+              We are fetching that content for you.
+            </Message.Content>
+          </Message>
+        ) : (
+          <Table celled>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell>SL No.</Table.HeaderCell>
+                <Table.HeaderCell>Label</Table.HeaderCell>
+                <Table.HeaderCell>IP Address</Table.HeaderCell>
+                <Table.HeaderCell>Description</Table.HeaderCell>
+                <Table.HeaderCell>Action</Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
 
-          <Table.Body>
-            {ipList &&
-              ipList.map((data, index) => (
-                <Table.Row key={data.label + index}>
-                  <Table.Cell>{index + 1}</Table.Cell>
-                  <Table.Cell>{data.label}</Table.Cell>
-                  <Table.Cell>{data.ip}</Table.Cell>
-                  <Table.Cell>{data.description}</Table.Cell>
-                  <Table.Cell>
-                    <a
-                      href=""
-                      onClick={(e) => this.openDataWithModal(e, index)}
-                    >
-                      {" "}
-                      Edit
-                    </a>
-                  </Table.Cell>
-                </Table.Row>
-              ))}
-          </Table.Body>
-        </Table>
-
+            <Table.Body>
+              {ipList &&
+                ipList.map((data, index) => (
+                  <Table.Row key={data.label + index}>
+                    <Table.Cell>{index + 1}</Table.Cell>
+                    <Table.Cell>{data.label}</Table.Cell>
+                    <Table.Cell>{data.ip}</Table.Cell>
+                    <Table.Cell>{data.description}</Table.Cell>
+                    <Table.Cell>
+                      <a
+                        href=""
+                        onClick={(e) => this.openDataWithModal(e, index)}
+                      >
+                        {" "}
+                        Edit
+                      </a>
+                    </Table.Cell>
+                  </Table.Row>
+                ))}
+            </Table.Body>
+          </Table>
+        )}
         <Modal
           onClose={() => this.setOpenModal()}
           onOpen={() => this.setOpenModal()}
           open={isOpen}
-          trigger={<Button>Show Modal</Button>}
+          //trigger={<Button>Show Modal</Button>}
         >
           <Modal.Header>Update IP Label</Modal.Header>
           <Modal.Content image>
