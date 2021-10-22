@@ -7,6 +7,7 @@ import Login from "./components/Login";
 import Home from "./components/Home";
 import IPList from "./components/IPList";
 import AddNewIP from "./components/AddNewIP";
+import Register from "./components/Register";
 
 import "./styles.css";
 class App extends Component {
@@ -21,6 +22,7 @@ class App extends Component {
         <Switch>
           <Route path="/" exact component={Home} />
           <Route path="/login" exact component={Login} />
+          <Route path="/register" exact component={Register} />
           <ProtectedRoute path="/add-ip" exact component={AddNewIP} />
           <ProtectedRoute path="/ip-list" exact component={IPList} />
         </Switch>
