@@ -32,6 +32,13 @@ const ApiService = {
       .catch((reason) => Promise.reject(reason));
   },
 
+  put(url, data) {
+    return instance
+      .put(url, data)
+      .then((res) => res)
+      .catch((reason) => Promise.reject(reason));
+  },
+  
   awaitAll() {
     return axios
       .all(Array.from(arguments))
