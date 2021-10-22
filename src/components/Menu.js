@@ -50,6 +50,16 @@ class HeaderMenu extends Component {
         {!loggedIn && (
           <React.Fragment>
             <Menu.Menu position="right">
+            <Menu.Item
+                name="register"
+                active={activeItem === "register"}
+                onClick={this.handleItemClick}
+                as={Link}
+                to="/register"
+              >
+                Registration
+              </Menu.Item>
+
               <Menu.Item
                 name="login"
                 active={activeItem === "login"}
@@ -60,6 +70,7 @@ class HeaderMenu extends Component {
                 Log-in
               </Menu.Item>
             </Menu.Menu>
+
           </React.Fragment>
         )}
         {loggedIn && (

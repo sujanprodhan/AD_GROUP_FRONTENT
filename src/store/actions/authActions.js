@@ -2,7 +2,7 @@ import { login } from "../../api/auth-api";
 import history from "../../history";
 
 import axios from "axios";
-import { LOGIN, LOGOUT, FETCH_IP_LIST, UPDATE_IP_DATA,ADD_IP_DATA } from "./actionTypes";
+import { LOGIN, LOGOUT, FETCH_IP_LIST, UPDATE_IP_DATA,ADD_IP_DATA,ADD_NEW_USER } from "./actionTypes";
 
 import ApiService from "./ApiServices";
 export const attempLogin = (loginData, redirectUrl) => {
@@ -101,7 +101,27 @@ export const addNewIPAPI = (data) => {
         } else if (error.request) {
         } else {
         }
-        return { error: "Something went wrong!. API new data  insert error!!!" };
+        return { error: "Something went wrong!. API new data  insertion error!!!" };
+      });
+  };
+};
+
+
+
+export const addNewUser = (data) => {
+  return (dispatch) => {
+    return ApiService.post("/api/auth/register", data)
+      .then(({ data }) => {
+        dispatch({ type: ADD_NEW_USER, payload: data });
+        return data;
+      })
+      .catch(function (error) {
+        if (error.response) {
+          // custom meesage if needed
+        } else if (error.request) {
+        } else {
+        }
+        return { error: "Something went wrong!. API new user  insertion error!!!" };
       });
   };
 };
