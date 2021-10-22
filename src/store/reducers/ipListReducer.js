@@ -1,4 +1,4 @@
-import { FETCH_IP_LIST } from "../actions/actionTypes";
+import { FETCH_IP_LIST, UPDATE_IP_DATA } from "../actions/actionTypes";
 
 const openState = {
   ipList: [],
@@ -11,6 +11,8 @@ export default (state = openState, action) => {
         ...state,
         ipList: action.payload,
       };
+      case UPDATE_IP_DATA:
+        //
     default:
       return { ...state };
   }

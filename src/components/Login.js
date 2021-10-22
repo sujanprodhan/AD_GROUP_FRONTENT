@@ -46,7 +46,7 @@ class Login extends Component {
     });
   };
   componentWillUnmount(){
-    console.log("called here")
+   //
   }
 
   render() {

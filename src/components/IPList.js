@@ -11,7 +11,7 @@ import {
   Modal,
   Divider,
   Input,
-  TextArea
+  TextArea,
 } from "semantic-ui-react";
 import { connect } from "react-redux";
 import { withRouter, Redirect } from "react-router-dom";
@@ -20,6 +20,7 @@ import {
   authenticate,
   attempLogin,
   fetchIpList,
+  updateIpData,
 } from "../store/actions/authActions";
 class IPList extends Component {
   constructor(props) {
@@ -28,44 +29,78 @@ class IPList extends Component {
       ipList: [],
       isOpen: false,
       dataIndex: 0,
+      inputLabel: "",
+      inputDescription: "",
+      updataErrorMessage: "",
+      updateStatus: true,
     };
     this.setOpenModal = this.setOpenModal.bind(this);
     this.openDataWithModal = this.openDataWithModal.bind(this);
     this.updateIP = this.updateIP.bind(this);
+    this.handleChangeLabel = this.handleChangeLabel.bind(this);
+    this.handleChangeDescription = this.handleChangeDescription.bind(this);
   }
   setOpenModal() {
     this.setState({ isOpen: !this.state.isOpen });
   }
   openDataWithModal(event, index) {
-    this.setState({ isOpen: !this.state.isOpen, dataIndex: index });
+    let { ipList } = this.state;
+    this.setState({
+      isOpen: !this.state.isOpen,
+      dataIndex: index,
+      inputLabel: ipList[index] ? ipList[index].label : "",
+      inputDescription: ipList[index] ? ipList[index].description : "",
+    });
     event.preventDefault();
   }
-  updateIP(){
-      const {ipList,dataIndex} = this.state;
-      let label = this.label;
-      let description = this.description;
-      let ipId = this.ipId;
-        const ipData = {
-            label: label,
-            description:description,
-            id: ipList[dataIndex].id
-        }
-        console.log("ipData",ipData);
-    //   this.props.updateIpData(ipData).then((data) => {
-    //     console.log("data iplist === ", data.data);
-    //     this.setState({ ipList: data.data || [] });
-    //   });
+  updateIP(event) {
+    const { ipList, dataIndex, inputDescription, inputLabel } = this.state;
+    const ipData = {
+      label: inputLabel,
+      description: inputDescription,
+      id: ipList[dataIndex].id,
+    };
+    this.props.updateIpData(ipData).then((data) => {
+      if (data.status) {
+        ipList[dataIndex].label = inputLabel;
+        ipList[dataIndex].description = inputDescription;
+        this.setState({
+          ipList: [...ipList],
+          isOpen: false,
+          updataErrorMessage: "",
+          updateStatus: data.status,
+        });
+      } else {
+        this.setState({
+          updataErrorMessage: "Something went wrong!. API update data  error!!",
+          updateStatus: data.status,
+        });
+      }
+    });
+  }
 
+  handleChangeLabel(event) {
+    this.setState({ inputLabel: event.target.value });
+  }
+  handleChangeDescription(event) {
+    this.setState({ inputDescription: event.target.value });
   }
   componentDidMount() {
     this.props.fetchIpList().then((data) => {
-      console.log("data iplist === ", data.data);
       this.setState({ ipList: data.data || [] });
     });
   }
 
   render() {
-    const { ipList, isOpen ,dataIndex} = this.state;
+    const {
+      ipList,
+      isOpen,
+      dataIndex,
+      inputLabel,
+      inputDescription,
+      updateStatus,
+      updataErrorMessage,
+    } = this.state;
     return (
       <div className="wrapper">
         <h1>IP Address List</h1>
@@ -113,28 +148,39 @@ class IPList extends Component {
           <Modal.Content image>
             <Modal.Description>
               <Form.Field inline>
+                <Label pointing="right">IP</Label>
+                <Input
+                  type="text"
+                  disabled
+                  value={ipList[dataIndex] ? ipList[dataIndex].ip || "" : ""}
+                />
+              </Form.Field>
+              <Divider />
+              <Form.Field inline>
                 <Label pointing="right">Label</Label>
-                <Input type="text" placeholder="label" 
-                ref={node => (this.label = node)}
-                value={ipList[dataIndex] ? ipList[dataIndex].label || "" :""}
+                <Input
+                  type="text"
+                  placeholder="label"
+                  value={inputLabel}
+                  onChange={this.handleChangeLabel}
                 />
               </Form.Field>
               <Divider />
               <Form.Field inline>
                 <Label pointing="right">Description</Label>
-                <Input type="text" placeholder="Description" 
-                ref={node => (this.description = node)}
-                value={ipList[dataIndex] ? ipList[dataIndex].description || "" :""}
+                <Input
+                  type="text"
+                  placeholder="Description"
+                  value={inputDescription}
+                  onChange={this.handleChangeDescription}
                 />
               </Form.Field>
-              <Divider />
-              <Form.Field inline>
-                <Label pointing="right">IP</Label>
-                <Input type="text" disabled                 
-                 value={ipList[dataIndex] ? ipList[dataIndex].ip || "" :""}
-                />
-              </Form.Field>
-              <Divider />
+
+              {!updateStatus && updataErrorMessage && (
+                <Message warning>
+                  <Message.Header>{updataErrorMessage}</Message.Header>
+                </Message>
+              )}
             </Modal.Description>
           </Modal.Content>
           <Modal.Actions>
@@ -145,7 +191,7 @@ class IPList extends Component {
               content="Update"
               labelPosition="right"
               icon="checkmark"
-              onClick={() => this.updateIP()}
+              onClick={(e) => this.updateIP()}
               positive
             />
           </Modal.Actions>
@@ -156,15 +202,17 @@ class IPList extends Component {
 }
 
 IPList.propTypes = {
-  //  fetchIpList: PropTypes.func.isRequired,
+  fetchIpList: PropTypes.func.isRequired,
+  updateIpData: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
-  //  loggedIn: state.auth.loggedIn,
+  ipList: state.list.ipList,
 });
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    updateIpData: (data) => dispatch(updateIpData(data)),
     fetchIpList: () => dispatch(fetchIpList()),
   };
 };
